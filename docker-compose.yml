@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+
+  app:
+    container_name: app
+    build:
+      context: ./src/php
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/php:/var/www/
+    restart: unless-stopped
+
+  webserver:
+    image: arm64v8/nginx
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./src/php:/var/www
+      - ./src/docker/nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - "80:80"
+      - "443:443"
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: 'kmatest'
+      MYSQL_DATABASE: 'kmatest'
+      MYSQL_USER: 'kmatest'
+      MYSQL_PASSWORD: 'kmatest'
+    volumes:
+      - ./src/docker/volumes/mariadb:/var/lib/mysql
+    ports:
+      - "6606:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - '8080:80'
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+    depends_on:
+      - mariadb
+
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./src/docker/volumes/rabbitmq/data:/var/lib/rabbitmq/
+      - ./src/docker/volumes/rabbitmq/log:/var/log/rabbitmq

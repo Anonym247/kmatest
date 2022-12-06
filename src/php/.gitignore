@@ -1,0 +1,6 @@
+vendor/
+!log
+log/*
+
+supervisord.log
+supervisord.pid

@@ -1,0 +1,13 @@
+{
+  "name": "shamil/intro",
+  "authors": [
+    {
+      "name": "Shamil Mardanzade",
+      "email": "shamil.mardanzade@gmail.com"
+    }
+  ],
+  "require": {
+    "ext-json": "*",
+    "php-amqplib/php-amqplib": "^3.4"
+  }
+}
